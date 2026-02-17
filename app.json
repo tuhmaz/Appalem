@@ -30,7 +30,6 @@
       "googleServicesFile": "./GoogleService-Info.plist"
     },
     "android": {
-      "versionCode": 1,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#091725"
@@ -39,7 +38,6 @@
         "INTERNET",
         "POST_NOTIFICATIONS"
       ],
-      "package": "com.alemancenter.alemedu",
       "googleServicesFile": "./google-services.json"
     },
     "web": {},
