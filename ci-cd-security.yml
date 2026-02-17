@@ -1,0 +1,258 @@
+name: Mobile App Security Scanning
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    - cron: '0 2 * * 1' # Every Monday at 2 AM
+
+jobs:
+  security-scan:
+    name: Security Scanning
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: './mobile/package-lock.json'
+
+    - name: Install dependencies
+      run: |
+        cd mobile
+        npm ci --no-audit
+
+    - name: Run npm audit
+      id: npm-audit
+      run: |
+        cd mobile
+        npm audit --audit-level moderate --json > audit-report.json || true
+        
+        # Check if there are critical vulnerabilities
+        if [ -s audit-report.json ]; then
+          echo "AUDIT_REPORT=$(cat audit-report.json | jq -c .)" >> $GITHUB_OUTPUT
+          
+          # Count vulnerabilities by severity
+          CRITICAL_COUNT=$(cat audit-report.json | jq '.vulnerabilities.critical // 0')
+          HIGH_COUNT=$(cat audit-report.json | jq '.vulnerabilities.high // 0')
+          MODERATE_COUNT=$(cat audit-report.json | jq '.vulnerabilities.moderate // 0')
+          
+          echo "CRITICAL_VULNERABILITIES=$CRITICAL_COUNT" >> $GITHUB_OUTPUT
+          echo "HIGH_VULNERABILITIES=$HIGH_COUNT" >> $GITHUB_OUTPUT
+          echo "MODERATE_VULNERABILITIES=$MODERATE_COUNT" >> $GITHUB_OUTPUT
+          
+          if [ $CRITICAL_COUNT -gt 0 ] || [ $HIGH_COUNT -gt 0 ]; then
+            echo "SECURITY_STATUS=failed" >> $GITHUB_OUTPUT
+            exit 1
+          else
+            echo "SECURITY_STATUS=passed" >> $GITHUB_OUTPUT
+          fi
+        else
+          echo "SECURITY_STATUS=passed" >> $GITHUB_OUTPUT
+          echo "CRITICAL_VULNERABILITIES=0" >> $GITHUB_OUTPUT
+          echo "HIGH_VULNERABILITIES=0" >> $GITHUB_OUTPUT
+          echo "MODERATE_VULNERABILITIES=0" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Run dependency check
+      run: |
+        cd mobile
+        npx npm-check-updates --json > ncu-report.json
+        
+        # Count outdated packages
+        OUTDATED_COUNT=$(cat ncu-report.json | jq 'length')
+        echo "OUTDATED_PACKAGES=$OUTDATED_COUNT" >> $GITHUB_ENV
+
+    - name: Run ESLint security rules
+      run: |
+        cd mobile
+        npx eslint . --ext .ts,.tsx --format json > eslint-security-report.json || true
+
+    - name: Check for hardcoded secrets
+      uses: gitleaks/gitleaks-action@v2
+      with:
+        config-path: .gitleaks.toml
+
+    - name: Upload security reports
+      uses: actions/upload-artifact@v4
+      with:
+        name: security-reports
+        path: |
+          mobile/audit-report.json
+          mobile/ncu-report.json
+          mobile/eslint-security-report.json
+
+    - name: Send security alert on failure
+      if: steps.npm-audit.outputs.SECURITY_STATUS == 'failed'
+      uses: actions/github-script@v7
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        script: |
+          const critical = ${{ steps.npm-audit.outputs.CRITICAL_VULNERABILITIES }};
+          const high = ${{ steps.npm-audit.outputs.HIGH_VULNERABILITIES }};
+          
+          github.rest.issues.create({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            title: `🚨 Security Alert: ${critical} critical and ${high} high vulnerabilities found`,
+            body: `
+### Security Scan Results
+
+**Critical Vulnerabilities:** ${critical}
+**High Vulnerabilities:** ${high}
+**Moderate Vulnerabilities:** ${{ steps.npm-audit.outputs.MODERATE_VULNERABILITIES }}
+
+Please review the security reports and update dependencies immediately.
+
+**Scan Details:**
+- Branch: ${context.ref}
+- Commit: ${context.sha}
+- Timestamp: ${new Date().toISOString()}
+            `,
+            labels: ['security', 'critical']
+          });
+
+    - name: Send weekly security report
+      if: github.event_name == 'schedule'
+      uses: actions/github-script@v7
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        script: |
+          const critical = ${{ steps.npm-audit.outputs.CRITICAL_VULNERABILITIES }};
+          const high = ${{ steps.npm-audit.outputs.HIGH_VULNERABILITIES }};
+          const moderate = ${{ steps.npm-audit.outputs.MODERATE_VULNERABILITIES }};
+          const outdated = process.env.OUTDATED_PACKAGES;
+          
+          github.rest.issues.create({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            title: `📊 Weekly Security Report - ${new Date().toLocaleDateString()}`,
+            body: `
+### 📈 Weekly Security Summary
+
+**Vulnerabilities:**
+- 🔴 Critical: ${critical}
+- 🟠 High: ${high}
+- 🟡 Moderate: ${moderate}
+
+**Maintenance:**
+- 📦 Outdated Packages: ${outdated}
+
+**Recommendations:**
+${critical > 0 || high > 0 ? '🚨 **Immediate action required** - Update vulnerable dependencies\n' : ''}
+${moderate > 0 ? '⚠️ **Review moderate vulnerabilities** - Schedule updates\n' : ''}
+${outdated > 10 ? '📋 **Consider dependency cleanup** - Many outdated packages\n' : ''}
+
+*This is an automated weekly security report.*
+            `,
+            labels: ['security', 'report', 'weekly']
+          });
+
+  code-quality:
+    name: Code Quality & Security
+    runs-on: ubuntu-latest
+    needs: security-scan
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+
+    - name: Download security reports
+      uses: actions/download-artifact@v4
+      with:
+        name: security-reports
+
+    - name: Generate security dashboard
+      run: |
+        # Generate HTML security dashboard
+        cat > security-dashboard.html << EOF
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Security Dashboard - Mobile App</title>
+            <style>
+                body { font-family: Arial, sans-serif; margin: 20px; }
+                .critical { color: #d73a4a; font-weight: bold; }
+                .high { color: #f66a0a; }
+                .moderate { color: #ffd33d; }
+                .passed { color: #28a745; }
+                .failed { color: #d73a4a; }
+            </style>
+        </head>
+        <body>
+            <h1>Security Dashboard</h1>
+            <h2>Vulnerability Summary</h2>
+            <div id="summary">Loading...</div>
+            
+            <h2>Reports</h2>
+            <ul>
+                <li><a href="audit-report.json">NPM Audit Report</a></li>
+                <li><a href="ncu-report.json">Dependency Update Report</a></li>
+                <li><a href="eslint-security-report.json">ESLint Security Report</a></li>
+            </ul>
+            
+            <script>
+                // Load and display audit report
+                fetch('audit-report.json')
+                    .then(r => r.json())
+                    .then(data => {
+                        const vuln = data.vulnerabilities || {};
+                        document.getElementById('summary').innerHTML = `
+                            <p class="${vuln.critical > 0 ? 'failed' : 'passed'}">
+                                Critical: ${vuln.critical || 0}
+                            </p>
+                            <p class="${vuln.high > 0 ? 'failed' : 'passed'}">
+                                High: ${vuln.high || 0}
+                            </p>
+                            <p class="${vuln.moderate > 0 ? 'failed' : 'passed'}">
+                                Moderate: ${vuln.moderate || 0}
+                            </p>
+                        `;
+                    });
+            </script>
+        </body>
+        </html>
+        EOF
+
+    - name: Upload security dashboard
+      uses: actions/upload-artifact@v4
+      with:
+        name: security-dashboard
+        path: security-dashboard.html
+
+  deploy-security:
+    name: Deploy Security Checks
+    runs-on: ubuntu-latest
+    needs: [security-scan, code-quality]
+    if: always()
+    
+    steps:
+    - name: Security status summary
+      run: |
+        echo "Security scanning completed"
+        echo "Status: ${{ needs.security-scan.result }}"
+        echo "Vulnerabilities: ${{ needs.security-scan.outputs.CRITICAL_VULNERABILITIES }} critical, ${{ needs.security-scan.outputs.HIGH_VULNERABILITIES }} high"
+
+    - name: Create security badge
+      uses: schneegans/dynamic-badges-action@v1.7.0
+      with:
+        auth: ${{ secrets.GITHUB_TOKEN }}
+        name: Security
+        label: Vulnerabilities
+        value: ${{ needs.security-scan.outputs.CRITICAL_VULNERABILITIES }}
+        max: 0
+        style: ${{ needs.security-scan.outputs.CRITICAL_VULNERABILITIES > 0 && 'plastic' || 'flat' }}
+        color: ${{ needs.security-scan.outputs.CRITICAL_VULNERABILITIES > 0 && 'red' || 'green' }}
+        namedLogo: dependabot

@@ -1,0 +1,86 @@
+title = "Gitleaks Configuration for Mobile App"
+
+[[rules]]
+id = "aws-access-key"
+description = "AWS Access Key"
+regex = '''(?:A3T[A-Z0-9]|AKIA|AGPA|AIDA|AROA|AIPA|ANPA|ANVA|ASIA)[A-Z0-9]{16}'''
+
+[[rules]]
+id = "aws-secret-key"
+description = "AWS Secret Key"
+regex = '''(?i)aws(.{0,20})?['\"][0-9a-zA-Z\/+]{40}['\"]'''
+
+[[rules]]
+id = "google-api-key"
+description = "Google API Key"
+regex = '''AIza[0-9A-Za-z\\-_]{35}'''
+
+[[rules]]
+id = "google-oauth"
+description = "Google OAuth Token"
+regex = '''ya29\\.[0-9A-Za-z\\-_]+'''
+
+[[rules]]
+id = "slack-token"
+description = "Slack Token"
+regex = '''xox[baprs]-([0-9a-zA-Z]{10,48})?'''
+
+[[rules]]
+id = "stripe-key"
+description = "Stripe API Key"
+regex = '''(?:sk|pk)_(?:test|live)_[0-9a-z]{24,99}'''
+
+[[rules]]
+id = "jwt-token"
+description = "JWT Token"
+regex = '''eyJhbGciOiJ[0-9A-Za-z\\-_]+\\.[0-9A-Za-z\\-_]+\\.[0-9A-Za-z\\-_]{43}'''
+
+[[rules]]
+id = "firebase-token"
+description = "Firebase Token"
+regex = '''[0-9]+:[0-9a-zA-Z]{28,}'''
+
+[[rules]]
+id = "database-url"
+description = "Database Connection String"
+regex = '''(?:postgres|mysql|mongodb)://[^:]+:[^@]+@[^/]+/[^\s]+'''
+
+[[rules]]
+id = "email-password"
+description = "Email Password"
+regex = '''(?:smtp|email).{0,20}['\"][0-9a-zA-Z]{8,}['\"]'''
+
+[[rules]]
+id = "private-key"
+description = "Private Key"
+regex = '''-----BEGIN (?:RSA|DSA|EC|OPENSSH) PRIVATE KEY-----'''
+
+[[rules]]
+id = "credit-card"
+description = "Credit Card Number"
+regex = '''(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|3[47][0-9]{13}|3(?:0[0-5]|[68][0-9])[0-9]{11}|6(?:011|5[0-9]{2})[0-9]{12}|(?:2131|1800|35\\d{3})\\d{11})'''
+
+# Allowlist specific patterns
+[[allowlist]]
+description = "Test API keys"
+regexes = [
+  '''sk_test_.*''',
+  '''pk_test_.*''',
+  '''AIza.*test.*'''
+]
+
+[[allowlist]]
+description = "Example patterns"
+paths = [
+  "**/*.test.*",
+  "**/*.spec.*",
+  "**/__tests__/**",
+  "**/examples/**"
+]
+
+# Global configuration
+[general]
+logLevel = "info"
+redact = true
+exitCode = 1
+verbose = false

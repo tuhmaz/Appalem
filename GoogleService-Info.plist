@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>355081834249-r17i5t7f7ipobbj84namdc777k1536e1.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.355081834249-r17i5t7f7ipobbj84namdc777k1536e1</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>355081834249-089ng7v0lf6hanvvb7i4c8or4cqvfbcb.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyAQsgmfYaPrCEcSB2bo85gJDU3CgFTBeGc</string>
+	<key>GCM_SENDER_ID</key>
+	<string>355081834249</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.alemancenter.alemedu</string>
+	<key>PROJECT_ID</key>
+	<string>alemancenter-app</string>
+	<key>STORAGE_BUCKET</key>
+	<string>alemancenter-app.firebasestorage.app</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:355081834249:ios:f66db90a3af542aea60dd8</string>
+</dict>
+</plist>
