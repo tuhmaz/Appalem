@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "355081834249",
+    "project_id": "alemancenter-app",
+    "storage_bucket": "alemancenter-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:355081834249:android:3ab6aad92e4fa6f7a60dd8",
+        "android_client_info": {
+          "package_name": "com.alemancenter.alemedu"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "355081834249-089ng7v0lf6hanvvb7i4c8or4cqvfbcb.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.alemancenter.alemedu",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "355081834249-t2d4q05tifb0jbua0uak9sqvshj1gv46.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBmgRja1xuKs4gFTt9nbvy70vJ62vXvDy8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "355081834249-t2d4q05tifb0jbua0uak9sqvshj1gv46.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "355081834249-r17i5t7f7ipobbj84namdc777k1536e1.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.alemancenter.alemedu",
+                "app_store_id": "123456"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

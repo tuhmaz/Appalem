@@ -18,6 +18,5 @@ android/keystore.properties
 android/app/.cxx/
 *.jks
 *.keystore
-google-services.json
 
 nul

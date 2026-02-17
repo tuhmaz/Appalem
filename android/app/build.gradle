@@ -1,3 +1,5 @@
+import org.gradle.api.GradleException
+
 apply plugin: "com.android.application"
 apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
@@ -107,6 +109,7 @@ android {
         keystoreProperties['storePassword'] &&
         keystoreProperties['keyAlias'] &&
         keystoreProperties['keyPassword']
+    def isEasBuild = System.getenv("EAS_BUILD") == "true"
     def releaseTaskRequested = gradle.startParameter.taskNames.any {
         def task = it.toLowerCase()
         task.contains('release') || task.contains('bundle') || task.contains('publish') || task.contains('package')
@@ -120,7 +123,7 @@ android {
             keyPassword 'android'
         }
         release {
-            if (!hasReleaseSigning && releaseTaskRequested) {
+            if (!hasReleaseSigning && releaseTaskRequested && !isEasBuild) {
                 throw new GradleException("Missing release signing configuration. Please set storeFile/storePassword/keyAlias/keyPassword in android/keystore.properties.")
             }
             if (hasReleaseSigning) {
@@ -128,6 +131,8 @@ android {
                 storePassword keystoreProperties['storePassword']
                 keyAlias keystoreProperties['keyAlias']
                 keyPassword keystoreProperties['keyPassword']
+            } else if (isEasBuild) {
+                // EAS remote credentials are injected during cloud builds.
             } else {
                 storeFile file('debug.keystore')
                 storePassword 'android'
