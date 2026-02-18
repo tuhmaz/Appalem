@@ -16,5 +16,8 @@ export const ENV = {
   ADMOB_ANDROID_BANNER_ID: process.env.EXPO_PUBLIC_ADMOB_ANDROID_BANNER_ID || '',
   ADMOB_IOS_BANNER_ID: process.env.EXPO_PUBLIC_ADMOB_IOS_BANNER_ID || '',
   ADMOB_ANDROID_INTERSTITIAL_ID: process.env.EXPO_PUBLIC_ADMOB_ANDROID_INTERSTITIAL_ID || '',
-  ADMOB_IOS_INTERSTITIAL_ID: process.env.EXPO_PUBLIC_ADMOB_IOS_INTERSTITIAL_ID || ''
+  ADMOB_IOS_INTERSTITIAL_ID: process.env.EXPO_PUBLIC_ADMOB_IOS_INTERSTITIAL_ID || '',
+
+  // SSL Pinning — set to 'true' to enable (requires valid cert in native resources)
+  SSL_PINNING_ENABLED: process.env.EXPO_PUBLIC_SSL_PINNING_ENABLED === 'true',
 };

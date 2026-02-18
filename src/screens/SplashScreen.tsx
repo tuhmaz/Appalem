@@ -11,7 +11,6 @@ import Animated, {
   runOnJS,
 } from 'react-native-reanimated';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useTheme } from '@/theme/ThemeContext';
 import * as SplashScreen from 'expo-splash-screen';
 
 const { width } = Dimensions.get('window');
@@ -27,8 +26,6 @@ const BG_SECONDARY = '#134765';
 const splashLogo = require('../../assets/icon.png');
 
 export function CustomSplashScreen({ onFinish }: SplashScreenProps) {
-  const { isDark } = useTheme();
-  
   // Animation values
   const logoScale = useSharedValue(0.3);
   const logoOpacity = useSharedValue(0);
@@ -67,7 +64,7 @@ export function CustomSplashScreen({ onFinish }: SplashScreenProps) {
     }, 2500); // Total splash duration
 
     return () => clearTimeout(timeout);
-  }, []);
+  }, [bgDrift, containerOpacity, logoOpacity, logoScale, onFinish, textOpacity]);
 
   const containerStyle = useAnimatedStyle(() => ({
     opacity: containerOpacity.value,

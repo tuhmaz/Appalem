@@ -27,8 +27,7 @@ export function CategoryDetailsScreen() {
 
     articleService.list({ category_id: route.params.categoryId })
       .then(data => {
-        const list = Array.isArray(data?.data) ? data.data : data;
-        if (mounted) setArticles(list || []);
+        if (mounted) setArticles(Array.isArray(data.data) ? data.data : []);
       })
       .catch(() => {
         if (mounted) setArticles([]);

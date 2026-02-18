@@ -22,7 +22,6 @@ import {
 } from '@/components';
 import { articleService } from '@/services/articles';
 import { commentService } from '@/services/comments';
-import { API_ENDPOINTS } from '@/services/endpoints';
 import { ENV } from '@/config/env';
 import type { Article, Comment, FileItem } from '@/types/api';
 import { useTranslation } from '@/hooks/useTranslation';
@@ -32,7 +31,6 @@ import { spacing, radius, typography } from '@/theme';
 import { useTheme } from '@/theme/ThemeContext';
 import { stripHtml } from '@/utils/format';
 import { useInterstitialAd } from '@/hooks/useInterstitialAd';
-import { openExternalUrl } from '@/utils/links';
 import { normalizeBaseUrl, normalizeExternalUrl, stripApiSuffix } from '@/utils/url';
 
 const ARTICLE_COMMENT_TYPE = 'App\\Models\\Article';

@@ -36,9 +36,12 @@
       },
       "permissions": [
         "INTERNET",
+        "POST_NOTIFICATIONS",
+        "INTERNET",
         "POST_NOTIFICATIONS"
       ],
-      "googleServicesFile": "./google-services.json"
+      "googleServicesFile": "./google-services.json",
+      "package": "com.alemancenter.alemedu"
     },
     "web": {},
     "plugins": [

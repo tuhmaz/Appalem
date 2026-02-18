@@ -159,9 +159,7 @@ export function SemesterDetailsScreen() {
 
     articleService.list(params)
       .then((data) => {
-        const list = Array.isArray(data?.data)
-          ? data.data
-          : (Array.isArray(data) ? data : []);
+        const list = Array.isArray(data.data) ? data.data : [];
         if (mounted) setArticles(list);
       })
       .catch(() => {

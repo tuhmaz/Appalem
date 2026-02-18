@@ -2,17 +2,21 @@
 import { API_ENDPOINTS } from './endpoints';
 import type { PaginatedResponse, Post } from '@/types/api';
 
-function unwrap<T>(payload: any): T {
-  return payload?.data ?? payload;
+function unwrap<T>(payload: unknown): T {
+  if (payload && typeof payload === 'object' && 'data' in payload) {
+    const data = (payload as { data?: unknown }).data;
+    return (data ?? payload) as T;
+  }
+  return payload as T;
 }
 
 export const postService = {
-  async list(params?: Record<string, string | number | boolean>) {
+  async list(params?: Record<string, string | number | boolean>): Promise<PaginatedResponse<Post> | Post[]> {
     const response = await apiClient.get<PaginatedResponse<Post> | { data: PaginatedResponse<Post> }>(
       API_ENDPOINTS.POSTS.LIST,
       { params }
     );
-    return unwrap<any>(response);
+    return unwrap<PaginatedResponse<Post> | Post[]>(response);
   },
   async show(id: number | string) {
     const response = await apiClient.get<{ data: Post } | Post>(API_ENDPOINTS.POSTS.SHOW(id));

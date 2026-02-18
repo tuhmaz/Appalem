@@ -12,11 +12,5 @@ local.properties
 *.hprof
 .cxx/
 
-# Release keystore
-keystore.properties
-*.jks
-*.keystore
-!app/debug.keystore
-
 # Bundle artifacts
 *.jsbundle

@@ -14,11 +14,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "355081834249-089ng7v0lf6hanvvb7i4c8or4cqvfbcb.apps.googleusercontent.com",
+          "client_id": "355081834249-n54pv12so57h0d5b5uaqai99c4faui1k.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.alemancenter.alemedu",
-            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+            "certificate_hash": "a7163a760e7420cdefc5b673c24cc393060481db"
           }
         },
         {

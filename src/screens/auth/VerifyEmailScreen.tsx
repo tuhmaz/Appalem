@@ -4,11 +4,9 @@ import { AppButton, AppText, Card, Screen } from '@/components';
 import { authService } from '@/services/auth';
 import { useTranslation } from '@/hooks/useTranslation';
 import { spacing } from '@/theme';
-import { useTheme } from '@/theme/ThemeContext';
 
 export function VerifyEmailScreen() {
   const { t } = useTranslation();
-  const { theme } = useTheme();
   const [loading, setLoading] = useState(false);
 
   const resend = async () => {

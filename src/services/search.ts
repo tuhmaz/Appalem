@@ -53,7 +53,7 @@ export async function searchLessons(filters: SearchFilters): Promise<SearchResul
   ) as Record<string, string | number | boolean>;
 
   const response = await articleService.list(filteredParams);
-  const data: Article[] = Array.isArray(response?.data) ? response.data : response;
+  const data: Article[] = Array.isArray(response.data) ? response.data : [];
 
   return (data || []).map(article => ({
     id: String(article.id),
@@ -63,4 +63,3 @@ export async function searchLessons(filters: SearchFilters): Promise<SearchResul
     date: article.created_at
   }));
 }
-

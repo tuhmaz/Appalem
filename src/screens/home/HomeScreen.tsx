@@ -210,7 +210,7 @@ export function HomeScreen() {
         ]);
         if (!mounted) return;
         setClasses(Array.isArray(classesResp) ? classesResp : []);
-        setArticles(Array.isArray(articlesResp?.data) ? articlesResp.data : articlesResp);
+        setArticles(Array.isArray(articlesResp.data) ? articlesResp.data : []);
       } catch {
         if (!mounted) return;
         setClasses([]);

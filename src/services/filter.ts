@@ -12,30 +12,60 @@ type SemestersPayload = {
   class_id?: number;
 };
 
-function unwrap<T>(payload: any): T {
-  return payload?.data ?? payload;
+type JsonObject = Record<string, unknown>;
+
+function isObject(value: unknown): value is JsonObject {
+  return typeof value === 'object' && value !== null;
 }
 
-function normalizeSubjects(payload: any): Subject[] {
-  const data = unwrap<any>(payload);
-  if (Array.isArray(data)) return data;
-  if (Array.isArray(data?.subjects)) return data.subjects;
-  if (Array.isArray(data?.data)) return data.data;
-  if (Array.isArray(payload?.subjects)) return payload.subjects;
+function unwrap<T>(payload: unknown): T {
+  if (isObject(payload) && 'data' in payload) {
+    const data = payload.data;
+    return (data ?? payload) as T;
+  }
+  return payload as T;
+}
+
+function normalizeSubjects(payload: unknown): Subject[] {
+  const data = unwrap<unknown>(payload);
+  if (Array.isArray(data)) return data as Subject[];
+  if (isObject(data) && Array.isArray(data.subjects)) return data.subjects as Subject[];
+  if (isObject(data) && Array.isArray(data.data)) return data.data as Subject[];
+  if (isObject(payload) && Array.isArray(payload.subjects)) return payload.subjects as Subject[];
   return [];
 }
 
-function normalizeSemesters(payload: any): { semesters: Semester[]; subject?: Subject; classId?: number } {
-  const data = unwrap<any>(payload);
-  const semesters =
-    (Array.isArray(data) && data) ||
-    (Array.isArray(data?.semesters) && data.semesters) ||
-    (Array.isArray(data?.data) && data.data) ||
-    (Array.isArray(payload?.semesters) && payload.semesters) ||
-    [];
+function normalizeSemesters(payload: unknown): { semesters: Semester[]; subject?: Subject; classId?: number } {
+  const data = unwrap<unknown>(payload);
 
-  const subject = data?.subject || payload?.subject;
-  const classId = data?.class_id ?? payload?.class_id;
+  let semesters: Semester[] = [];
+  if (Array.isArray(data)) {
+    semesters = data as Semester[];
+  } else if (isObject(data)) {
+    if (Array.isArray(data.semesters)) {
+      semesters = data.semesters as Semester[];
+    } else if (Array.isArray(data.data)) {
+      semesters = data.data as Semester[];
+    }
+  }
+
+  if (semesters.length === 0 && isObject(payload) && Array.isArray(payload.semesters)) {
+    semesters = payload.semesters as Semester[];
+  }
+
+  let subject: Subject | undefined;
+  if (isObject(data) && isObject(data.subject)) {
+    subject = data.subject as Subject;
+  } else if (isObject(payload) && isObject(payload.subject)) {
+    subject = payload.subject as Subject;
+  }
+
+  let classId: number | undefined;
+  if (isObject(data) && typeof data.class_id === 'number') {
+    classId = data.class_id;
+  } else if (isObject(payload) && typeof payload.class_id === 'number') {
+    classId = payload.class_id;
+  }
 
   return { semesters, subject, classId };
 }

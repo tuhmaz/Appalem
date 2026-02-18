@@ -14,6 +14,11 @@ export type SecureStorageOptions = {
   service?: string;
 };
 
+type KeychainNativeModules = {
+  RNKeychainManager?: unknown;
+  RNKeychainManagerTurboModule?: unknown;
+};
+
 class SecureStorageService {
   private static instance: SecureStorageService;
   private defaultService: string = 'com.alemancenter.alemedu';
@@ -39,8 +44,9 @@ class SecureStorageService {
       return false;
     }
 
-    const module = (NativeModules as any).RNKeychainManager
-      ?? (NativeModules as any).RNKeychainManagerTurboModule;
+    const nativeModules = NativeModules as typeof NativeModules & KeychainNativeModules;
+    const module = nativeModules.RNKeychainManager
+      ?? nativeModules.RNKeychainManagerTurboModule;
     this.keychainAvailable = Boolean(module);
     return this.keychainAvailable;
   }
@@ -142,7 +148,7 @@ class SecureStorageService {
    * Store non-sensitive structured data with AsyncStorage
    * For sensitive data, always use Keychain methods (setSecureItem)
    */
-  async setEncryptedItem(key: string, value: any): Promise<void> {
+  async setEncryptedItem(key: string, value: unknown): Promise<void> {
     try {
       await AsyncStorage.setItem(key, JSON.stringify(value));
     } catch (error) {

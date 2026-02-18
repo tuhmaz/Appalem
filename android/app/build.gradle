@@ -1,8 +1,7 @@
-import org.gradle.api.GradleException
-
 apply plugin: "com.android.application"
 apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
+apply plugin: "com.google.gms.google-services"
 
 def projectRoot = rootDir.getAbsoluteFile().getParentFile().getAbsolutePath()
 
@@ -89,32 +88,16 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace 'com.alemancenter.alemedu'
+    namespace "com.alemancenter.alemedu"
     defaultConfig {
-        applicationId 'com.alemancenter.alemedu'
+        applicationId "com.alemancenter.alemedu"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
-        versionName "1.0.0"
+        versionName "1.0"
 
         buildConfigField "String", "REACT_NATIVE_RELEASE_LEVEL", "\"${findProperty('reactNativeReleaseLevel') ?: 'stable'}\""
     }
-    def keystorePropertiesFile = rootProject.file("keystore.properties")
-    def keystoreProperties = new Properties()
-    if (keystorePropertiesFile.exists()) {
-        keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
-    }
-    def hasReleaseSigning =
-        keystoreProperties['storeFile'] &&
-        keystoreProperties['storePassword'] &&
-        keystoreProperties['keyAlias'] &&
-        keystoreProperties['keyPassword']
-    def isEasBuild = System.getenv("EAS_BUILD") == "true"
-    def releaseTaskRequested = gradle.startParameter.taskNames.any {
-        def task = it.toLowerCase()
-        task.contains('release') || task.contains('bundle') || task.contains('publish') || task.contains('package')
-    }
-
     signingConfigs {
         debug {
             storeFile file('debug.keystore')
@@ -123,22 +106,10 @@ android {
             keyPassword 'android'
         }
         release {
-            if (!hasReleaseSigning && releaseTaskRequested && !isEasBuild) {
-                throw new GradleException("Missing release signing configuration. Please set storeFile/storePassword/keyAlias/keyPassword in android/keystore.properties.")
-            }
-            if (hasReleaseSigning) {
-                storeFile file(keystoreProperties['storeFile'])
-                storePassword keystoreProperties['storePassword']
-                keyAlias keystoreProperties['keyAlias']
-                keyPassword keystoreProperties['keyPassword']
-            } else if (isEasBuild) {
-                // EAS remote credentials are injected during cloud builds.
-            } else {
-                storeFile file('debug.keystore')
-                storePassword 'android'
-                keyAlias 'androiddebugkey'
-                keyPassword 'android'
-            }
+            storeFile file('../../alemancenter.jks')
+            storePassword '12312300'
+            keyAlias 'alemancenter'
+            keyPassword '12312300'
         }
     }
     buildTypes {
@@ -214,5 +185,3 @@ dependencies {
         implementation jscFlavor
     }
 }
-
-apply plugin: 'com.google.gms.google-services'

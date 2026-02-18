@@ -1,8 +1,19 @@
+import { ENV } from '@/config/env';
+
 export type SSLPinningConfig = {
   certs: string[];
 };
 
-type PinnedFetch = (url: string, init: any) => Promise<Response>;
+type PinnedFetchInit = RequestInit & {
+  timeoutInterval?: number;
+  sslPinning?: SSLPinningConfig;
+};
+
+type PinnedFetch = (url: string, init: PinnedFetchInit) => Promise<Response>;
+
+type SSLPinningModule = {
+  fetch?: PinnedFetch;
+};
 
 // Certificate names (without extension) bundled in native projects.
 // Android: android/app/src/main/res/raw/<name>.cer
@@ -19,7 +30,7 @@ function getPinnedFetch(): PinnedFetch | null {
 
   try {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const module = require('react-native-ssl-pinning');
+    const module = require('react-native-ssl-pinning') as SSLPinningModule;
     cachedPinnedFetch = module?.fetch ?? null;
   } catch {
     cachedPinnedFetch = null;
@@ -43,7 +54,7 @@ function matchPinnedCerts(hostname: string): string[] | null {
 
 class SSLPinningService {
   private static instance: SSLPinningService;
-  private enabled = !__DEV__;
+  private enabled = ENV.SSL_PINNING_ENABLED && !__DEV__;
 
   static getInstance(): SSLPinningService {
     if (!SSLPinningService.instance) {

@@ -114,12 +114,14 @@ class SecureApiClient {
 
     if (isLocalHost(hostname)) return null;
 
+    // If SSL pinning is explicitly disabled via env, allow unpinned requests
+    if (!ENV.SSL_PINNING_ENABLED) return null;
+
     // In production, SSL pinning is always required (requireSSL override ignored)
     const effectiveRequireSSL = __DEV__ ? requireSSL : true;
     if (!effectiveRequireSSL) return null;
 
     if (!sslPinningService.isEnabled()) {
-      // In dev, allow unpinned requests; in prod, block them
       if (__DEV__) return null;
       throw new Error(
         `SSL pinning is required but not available. Request to ${hostname} blocked.`,

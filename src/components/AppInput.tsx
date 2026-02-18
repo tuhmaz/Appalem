@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { StyleSheet, TextInput, TextInputProps, View } from 'react-native';
+import { TextInput, TextInputProps, View } from 'react-native';
 import { useTheme } from '@/theme/ThemeContext';
 import { radius, spacing, typography } from '@/theme';
 import { useLocale } from '@/store/LocaleContext';

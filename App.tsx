@@ -22,7 +22,6 @@ import { ErrorBoundary } from '@/components/ErrorBoundary';
 function AppContent() {
   const { ready, locale } = useLocale();
   const { theme, isDark } = useTheme();
-  const [forceReady, setForceReady] = useState(false);
   const [isSplashFinished, setIsSplashFinished] = useState(false);
   const [fontsLoaded, fontError] = useFonts({
     Cairo_400Regular,
@@ -54,7 +53,7 @@ function AppContent() {
     }
   }, [ready, fontsLoaded, fontError, locale]);
 
-  if (!ready || (!fontsLoaded && !fontError && !forceReady)) {
+  if (!ready || (!fontsLoaded && !fontError)) {
     return null;
   }
 

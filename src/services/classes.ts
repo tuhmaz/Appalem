@@ -2,8 +2,12 @@
 import { API_ENDPOINTS } from './endpoints';
 import type { SchoolClass } from '@/types/api';
 
-function unwrap<T>(payload: any): T {
-  return payload?.data ?? payload;
+function unwrap<T>(payload: unknown): T {
+  if (payload && typeof payload === 'object' && 'data' in payload) {
+    const data = (payload as { data?: unknown }).data;
+    return (data ?? payload) as T;
+  }
+  return payload as T;
 }
 
 export const classService = {

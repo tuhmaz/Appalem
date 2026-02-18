@@ -2,17 +2,33 @@
 import { API_ENDPOINTS } from './endpoints';
 import type { Article, PaginatedResponse } from '@/types/api';
 
-function unwrap<T>(payload: any): T {
-  return payload?.data ?? payload;
+function unwrap<T>(payload: unknown): T {
+  if (payload && typeof payload === 'object' && 'data' in payload) {
+    const data = (payload as { data?: unknown }).data;
+    return (data ?? payload) as T;
+  }
+  return payload as T;
 }
 
 export const articleService = {
-  async list(params?: Record<string, string | number | boolean>) {
-    const response = await apiClient.get<PaginatedResponse<Article> | { data: PaginatedResponse<Article> } | { data: Article[] }>(
+  async list(params?: Record<string, string | number | boolean>): Promise<PaginatedResponse<Article>> {
+    const response = await apiClient.get<
+      PaginatedResponse<Article> |
+      { data: PaginatedResponse<Article> } |
+      { data: Article[] } |
+      Article[]
+    >(
       API_ENDPOINTS.ARTICLES.LIST,
       { params }
     );
-    return unwrap<any>(response);
+    const data = unwrap<PaginatedResponse<Article> | Article[]>(response);
+    if (Array.isArray(data)) {
+      return { data };
+    }
+    if (Array.isArray(data.data)) {
+      return data;
+    }
+    return { data: [] };
   },
   async show(id: number | string) {
     const response = await apiClient.get<{ data: Article } | Article>(API_ENDPOINTS.ARTICLES.SHOW(id));

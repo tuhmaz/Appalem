@@ -5,7 +5,7 @@ import { useTheme } from '@/theme/ThemeContext';
 
 export function LoadingState() {
   const { theme, isDark } = useTheme();
-  const colors = theme.colors as any;
+  const colors = theme.colors;
 
   return (
     <View style={[styles.container, {

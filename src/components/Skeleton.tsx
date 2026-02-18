@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { View, StyleSheet, ViewStyle, DimensionValue } from 'react-native';
+import { StyleSheet, ViewStyle, DimensionValue } from 'react-native';
 import Animated, {
   cancelAnimation,
   useSharedValue,
@@ -39,7 +39,7 @@ export function Skeleton({
       true
     );
     return () => { cancelAnimation(opacity); };
-  }, []);
+  }, [opacity]);
 
   const animatedStyle = useAnimatedStyle(() => ({
     opacity: opacity.value,

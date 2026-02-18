@@ -4,11 +4,9 @@ import { AppButton, AppInput, AppText, Card, Screen } from '@/components';
 import { authService } from '@/services/auth';
 import { useTranslation } from '@/hooks/useTranslation';
 import { spacing } from '@/theme';
-import { useTheme } from '@/theme/ThemeContext';
 
 export function ForgotPasswordScreen() {
   const { t } = useTranslation();
-  const { theme } = useTheme();
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
 

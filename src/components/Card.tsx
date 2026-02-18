@@ -44,7 +44,7 @@ export function Card({ variant = 'elevated', glow, style, ...props }: CardProps)
               },
             }),
             ...(glow ? {
-              borderColor: (theme.colors as any).accentGlow || 'rgba(99,230,226,0.15)',
+              borderColor: theme.colors.accentGlow || 'rgba(99,230,226,0.15)',
             } : {}),
           };
         case 'filled':
