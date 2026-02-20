@@ -1,12 +1,10 @@
 import React, { useMemo } from 'react';
-import { Platform, ScrollView, View, ViewStyle } from 'react-native';
+import { ScrollView, View, ViewStyle } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '@/theme/ThemeContext';
 import { spacing } from '@/theme';
 import { useLocale } from '@/store/LocaleContext';
-
-// Tab bar height when position:'absolute' in dark mode
-const TAB_BAR_HEIGHT = Platform.OS === 'ios' ? 85 : 64;
+import { TAB_BAR_CONTENT_HEIGHT } from '@/navigation/constants';
 
 type ScreenProps = {
   children: React.ReactNode;
@@ -29,8 +27,9 @@ export function Screen({ children, scroll, scrollable, style, contentStyle, back
   // In dark mode: transparent so the App-level gradient shows through
   const bgColor = isDark ? 'transparent' : theme.colors.background;
 
-  // Extra bottom padding when tab bar is absolute-positioned (dark mode + tab screens)
-  const tabPadding = (tabScreen && isDark) ? TAB_BAR_HEIGHT : 0;
+  // Extra bottom padding when tab bar is absolute-positioned (dark mode + tab screens).
+  // Only the content portion; SafeAreaView already handles the system inset.
+  const tabPadding = (tabScreen && isDark) ? TAB_BAR_CONTENT_HEIGHT : 0;
   // In dark mode with stack headers, add a small extra top offset to avoid visual overlap.
   const darkTopOffset = (!tabScreen && isDark) ? spacing.md : 0;
 

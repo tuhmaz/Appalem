@@ -1,6 +1,7 @@
 import React from 'react';
-import { Platform, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BlurView } from 'expo-blur';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/theme/ThemeContext';
@@ -11,12 +12,17 @@ import { PostsScreen } from '@/screens/posts/PostsScreen';
 import { SearchScreen } from '@/screens/search/SearchScreen';
 import { ProfileScreen } from '@/screens/profile/ProfileScreen';
 import { useTranslation } from '@/hooks/useTranslation';
+import { TAB_BAR_CONTENT_HEIGHT } from './constants';
 
 const Tab = createBottomTabNavigator();
 
 export function MainTabs() {
   const { t } = useTranslation();
   const { theme, isDark } = useTheme();
+  const insets = useSafeAreaInsets();
+
+  // Dynamic height: content area + system navigation bar inset
+  const tabBarHeight = TAB_BAR_CONTENT_HEIGHT + insets.bottom;
 
   return (
     <Tab.Navigator
@@ -36,8 +42,8 @@ export function MainTabs() {
             backgroundColor: 'rgba(8,24,38,0.85)',
             borderTopColor: 'rgba(255,255,255,0.05)',
             borderTopWidth: 1,
-            height: Platform.OS === 'ios' ? 85 : 64,
-            paddingBottom: Platform.OS === 'ios' ? 24 : 8,
+            height: tabBarHeight,
+            paddingBottom: insets.bottom,
             paddingTop: 8,
           },
           tabBarBackground: () => (
@@ -52,8 +58,8 @@ export function MainTabs() {
             backgroundColor: theme.colors.surface,
             borderTopColor: theme.colors.divider,
             borderTopWidth: 1,
-            height: Platform.OS === 'ios' ? 85 : 64,
-            paddingBottom: Platform.OS === 'ios' ? 24 : 8,
+            height: tabBarHeight,
+            paddingBottom: insets.bottom,
             paddingTop: 8,
           },
         }),
