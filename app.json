@@ -2,7 +2,7 @@
   "expo": {
     "name": "Alemancenter",
     "slug": "alemancenter-mobile",
-    "owner": "alemedu",
+    "owner": "alemancenter",
     "scheme": "alemancenter",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -27,7 +27,10 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.alemancenter.alemedu",
-      "googleServicesFile": "./GoogleService-Info.plist"
+      "googleServicesFile": "./GoogleService-Info.plist",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -49,15 +52,23 @@
         "react-native-google-mobile-ads",
         {
           "androidAppId": "ca-app-pub-5170334485305985~3688664536",
-          "iosAppId": "ca-app-pub-3940256099942544~1458002511"
+          "iosAppId": "ca-app-pub-5170334485305985~7415934780"
         }
       ],
       "expo-web-browser",
-      "@react-native-google-signin/google-signin"
+      "@react-native-google-signin/google-signin",
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "useFrameworks": "static"
+          }
+        }
+      ]
     ],
     "extra": {
       "eas": {
-        "projectId": "283fcae9-e9f1-4856-b637-b02fa278ea73"
+        "projectId": "89b7402d-158e-4fee-bf30-87ce6fc008b9"
       }
     }
   }
